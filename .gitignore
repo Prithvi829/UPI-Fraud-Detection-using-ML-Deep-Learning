@@ -1,0 +1,16 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.env
+data/raw/creditcard.csv
+data/processed/
+models/isolation_forest/model.pkl
+models/isolation_forest/scaler.pkl
+models/autoencoder/model.pt
+models/autoencoder/scaler.pkl
+.DS_Store
+*.egg-info/
+dist/
+build/
+.pytest_cache/

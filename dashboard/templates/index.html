@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UPI Payment Operations — Anomaly Monitor</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" defer></script>
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────── -->
+<header class="header">
+  <div class="header-left">
+    <div class="header-logo">U</div>
+    <div>
+      <div class="header-title">UPI Payment Operations — Anomaly Monitor</div>
+      <div class="header-subtitle">Real-time transaction routing &amp; intelligent flagging system</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="header-meta">
+      <div class="meta-version" id="model-version">Loading model info…</div>
+      <div class="meta-updated">Updated: <span id="last-updated">—</span></div>
+    </div>
+    <div class="status-live" id="status-live">
+      <span class="status-dot"></span>
+      <span id="status-pill-text">LIVE</span>
+    </div>
+  </div>
+</header>
+
+<!-- ── Main dashboard ─────────────────────────────────────── -->
+<main class="main">
+
+  <!-- Row 1: KPI metrics -->
+  <section class="metrics-row">
+    <div class="metric-card blue">
+      <div class="metric-label">Total Scored</div>
+      <div class="metric-value" id="metric-total">0</div>
+      <div class="metric-sub">UPI transactions</div>
+    </div>
+    <div class="metric-card red">
+      <div class="metric-label">Flagged</div>
+      <div class="metric-value" id="metric-flagged">0</div>
+      <div class="metric-sub">anomalies detected</div>
+    </div>
+    <div class="metric-card amber">
+      <div class="metric-label">Flag Rate</div>
+      <div class="metric-value" id="metric-flagrate">0.00%</div>
+      <div class="metric-sub">of all transactions</div>
+    </div>
+    <div class="metric-card green">
+      <div class="metric-label">Avg Latency</div>
+      <div class="metric-value" id="metric-latency">0ms</div>
+      <div class="metric-sub">scoring pipeline</div>
+    </div>
+  </section>
+
+  <!-- Row 2: Controls -->
+  <section class="controls-bar">
+    <div class="control-group">
+      <span class="control-label">Anomaly Threshold</span>
+      <input
+        type="range"
+        id="threshold-slider"
+        class="threshold-slider"
+        min="0" max="100" step="1"
+      />
+      <span class="threshold-value" id="threshold-value">50</span>
+    </div>
+    <div class="control-group">
+      <span class="control-label">Model View</span>
+      <div class="model-toggle">
+        <button class="toggle-btn" data-model="IF">IF</button>
+        <button class="toggle-btn active" data-model="BOTH">BOTH</button>
+        <button class="toggle-btn" data-model="AE">AE</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Row 3: Live feed + Risk donut -->
+  <section class="middle-row">
+
+    <!-- Live transaction feed -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Live Transaction Feed</span>
+        <span class="panel-badge" id="feed-count">last 20</span>
+      </div>
+      <div class="panel-body">
+        <div class="txn-table-wrap">
+          <table class="txn-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>UPI ID</th>
+                <th style="text-align:right">Amount</th>
+                <th>Category</th>
+                <th>Risk</th>
+                <th>Action</th>
+                <th style="text-align:right">Latency</th>
+              </tr>
+            </thead>
+            <tbody id="txn-tbody">
+              <tr>
+                <td colspan="7">
+                  <div class="empty-state">
+                    <span class="empty-state-icon">◈</span>
+                    <span>Awaiting transaction data…</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Risk level donut -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Risk Distribution</span>
+      </div>
+      <div class="panel-body">
+        <span class="chart-label">by risk level</span>
+        <div class="chart-container" style="height:280px">
+          <div id="chart-donut" style="height:100%"></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Row 4: Anomaly rate time-series -->
+  <section class="panel timeseries-row">
+    <div class="panel-header">
+      <span class="panel-title">Anomaly Rate Over Time</span>
+      <span class="panel-badge">last 60 min</span>
+    </div>
+    <div class="panel-body">
+      <span class="chart-label">IF flag rate (blue) · AE flag rate (red)</span>
+      <div class="chart-container" style="height:200px">
+        <div id="chart-timeseries" style="height:100%"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Row 5: Heatmap + Category bar -->
+  <section class="bottom-row">
+
+    <!-- Hour × Day heatmap -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Flag Heatmap</span>
+        <span class="panel-badge">hour × day of week</span>
+      </div>
+      <div class="panel-body">
+        <span class="chart-label">anomaly flags by hour &amp; day</span>
+        <div class="chart-container" style="height:230px">
+          <div id="chart-heatmap" style="height:100%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category flag rate bar chart -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Merchant Category</span>
+        <span class="panel-badge">flag rate %</span>
+      </div>
+      <div class="panel-body">
+        <span class="chart-label">flag rate by merchant category</span>
+        <div class="chart-container" style="height:230px">
+          <div id="chart-catbar" style="height:100%"></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+</body>
+</html>
