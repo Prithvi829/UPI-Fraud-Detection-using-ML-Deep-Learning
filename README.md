@@ -1,10 +1,8 @@
-<<<<<<< HEAD
+
 # UPI Anomaly Detector — Payment Operations Intelligence
 
 > Real-time UPI transaction anomaly detection with a self-healing ML pipeline,
 > intelligent risk routing, and a live payment operations dashboard.
-
----
 
 ## 1 · Project Overview
 
@@ -20,7 +18,6 @@ The system is built around five core capabilities:
 | **Model drift detection** | Sliding-window precision monitor |
 | **Self-healing pipeline** | Auto-retrains degraded models with hot-swap |
 
----
 
 ## 2 · Architecture
 
@@ -61,7 +58,6 @@ Data flow:
                                     {model.pkl/.pt, scaler.pkl, metrics.json}
 ```
 
----
 
 ## 3 · Quick Start
 
@@ -85,7 +81,6 @@ On first run the system will:
 
 Subsequent runs skip training and serve immediately.
 
----
 
 ## 4 · API Reference
 
@@ -137,8 +132,6 @@ curl -X POST http://localhost:5001/api/v1/score \
 curl http://localhost:5001/api/v1/health
 ```
 
----
-
 ## 5 · Model Comparison
 
 | Property | Isolation Forest | Autoencoder |
@@ -154,7 +147,6 @@ curl http://localhost:5001/api/v1/health
 
 **Consensus scoring:** A transaction is flagged as `HIGH` risk only when **both** models agree — this dramatically reduces false positives in production payment routing.
 
----
 
 ## 6 · Self-Healing System
 
@@ -175,7 +167,6 @@ Every 300 seconds:
 
 In production, replace the simulated ground-truth labels with real chargeback feedback from your payment processor.
 
----
 
 ## 7 · Real Kaggle Data vs Synthetic Fallback
 
@@ -194,7 +185,7 @@ ls data/raw/creditcard.csv
 
 Then run `python run.py` — it will detect the CSV and use it directly.
 
-### Synthetic fallback (default)
+### Synthetic fallback 
 
 If `creditcard.csv` is absent, `pipeline/ingest.py` automatically generates a statistically equivalent dataset:
 - **284 807 rows** with 0.17% fraud rate
@@ -204,21 +195,6 @@ If `creditcard.csv` is absent, `pipeline/ingest.py` automatically generates a st
 
 The synthetic dataset preserves the class imbalance and feature distributions needed for meaningful model training.
 
----
-
-## 8 · Resume Bullet Points
-
-> Copy these directly into your CV/LinkedIn profile:
-
-- **Engineered a real-time UPI transaction anomaly detection system** using dual-model consensus scoring (Isolation Forest + PyTorch Autoencoder), reducing false-positive payment blocks by 40% compared to single-model baselines across 284K+ transactions.
-
-- **Architected a self-healing ML pipeline** with a drift watchdog daemon that monitors precision on a sliding window of 200 transactions and automatically retrains degraded models with zero-downtime hot-swapping, maintaining >70% precision SLA without manual intervention.
-
-- **Built a production-grade Flask REST API** for sub-2ms UPI transaction scoring with 4-tier intelligent risk routing (LOW/MEDIUM/HIGH/CRITICAL), thread-safe in-memory transaction logging, CORS middleware, and structured JSON error handling across 7 endpoints.
-
-- **Delivered a live payment operations dashboard** using Plotly.js and vanilla JS with 5-second auto-refresh, featuring a real-time transaction feed, anomaly rate time-series, hour-by-day heatmap, and risk distribution donut — processing and visualising model drift events without any frontend framework dependency.
-
----
 
 ## Project Structure
 
@@ -406,8 +382,3 @@ detect fraudulent or suspicious transactions
 assist payment operations teams
 reduce manual review effort
 monitor transaction risk in real time
-
-Resume Summary
-
-Real-time UPI fraud detection system using Isolation Forest and Autoencoder with a self-healing ML pipeline, REST API, and live monitoring dashboard.
->>>>>>> 411b5468074d5a6a7395b9a4c1ec252a6c975581
